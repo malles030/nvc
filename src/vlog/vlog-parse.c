@@ -6483,6 +6483,7 @@ static void p_module_ansi_header(vlog_node_t mod)
    EXTEND("module ANSI header");
 
    if (peek() == tHASH) {
+      // Parameters not yet parsed (no preceding non-ANSI check)
       p_parameter_port_list(mod);
       param_kind = V_LOCALPARAM;
    }
@@ -6587,6 +6588,11 @@ static vlog_node_t p_module_declaration(void)
 
    while (peek() == tIMPORT)
       p_package_import_declaration(mod);
+
+   if (peek() == tHASH) {
+      p_parameter_port_list(mod);
+      param_kind = V_LOCALPARAM;
+   }
 
    if (peek() == tLPAREN && peek_nth(2) == tID)
       p_module_nonansi_header(mod);
